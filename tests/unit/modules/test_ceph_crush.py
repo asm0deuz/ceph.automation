@@ -1,8 +1,6 @@
-import sys
 import pytest
 
-sys.path.append('./library')
-import ceph_crush  # noqa: E402
+from ansible_collections.ceph.automation.plugins.modules import ceph_crush
 
 
 class TestCephCrushModule(object):
