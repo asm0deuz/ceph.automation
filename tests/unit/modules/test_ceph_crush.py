@@ -1,8 +1,6 @@
-import sys
 import pytest
 
-sys.path.append('./library')
-import ceph_crush  # noqa: E402
+from ansible_collections.ceph.automation.plugins.modules import ceph_crush
 
 
 class TestCephCrushModule(object):
@@ -70,7 +68,14 @@ class TestCephCrushModule(object):
             ("chassis", "monchassis"),
             ("rack", "monrack"),
         ]
-        result = ceph_crush.create_and_move_buckets_list(cluster, location)
+
+        crush_map = {"nodes":[{"id":-4,"name":"monrack","type":"rack","type_id":3,"children":[-3]},
+                              {"id":-3,"name":"monchassis","type":"chassis","type_id":2,"pool_weights":{},"children":[-2]},
+                              {"id":-2,"name":"monhost","type":"host","type_id":1,"pool_weights":{},"children":[]},
+                              {"id":-1,"name":"default","type":"root","type_id":11,"children":[]}],
+                     "stray":[]}
+
+        result = ceph_crush.create_and_move_buckets_list(cluster, location, crush_map)
         assert result == expected_command_list
 
     def test_generate_commands_container(self):
@@ -89,5 +94,5 @@ class TestCephCrushModule(object):
             ("chassis", "monchassis"),
             ("rack", "monrack"),
         ]
-        result = ceph_crush.create_and_move_buckets_list(cluster, location, containerized)
+        result = ceph_crush.create_and_move_buckets_list(cluster, location, crush_map, containerized)
         assert result == expected_command_list
